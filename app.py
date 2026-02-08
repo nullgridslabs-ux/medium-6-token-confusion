@@ -7,6 +7,17 @@ FLAG = os.environ.get("FLAG","CTF{dev}")
 
 tokens = {}
 
+@app.route("/")
+def index():
+    return """
+<h2>Account Token Service</h2>
+<ul>
+<li>POST /token/issue</li>
+<li>POST /reset</li>
+<li>GET /health</li>
+</ul>
+"""
+
 @app.route("/health")
 def health():
     return "ok"
@@ -22,11 +33,11 @@ def issue():
 def reset():
     token = request.json["token"]
 
-    # BUG: same token accepted for any purpose
     if token in tokens:
         return jsonify({"status":"reset","flag":FLAG})
 
     return jsonify({"err":"bad"}),403
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
